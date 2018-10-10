@@ -1,14 +1,30 @@
-module.exports = function(pool){
-    function home_route(req, res){
-        try {
-            res.render('login')
+module.exports = function() {
 
-        } catch (error) {
-            
+    function login (req, res) {
+        const loginUsername = req.query.username;
+        if (loginUsername && !req.session.username) {
+            req.session.username = loginUsername;
         }
+
+        res.redirect('/');
+    }
+
+    function home (req, res) {
+        let greeting = 'Hello';
+        if (req.session.username) {
+            greeting += (", " + req.session.username)
         }
-    
-    return{
-        home_route
+        res.send(greeting);
+    }
+
+    function logout (req, res) {
+        delete req.session.user;
+        res.redirect('/');
+    }
+
+    return {
+        login,
+        home,
+        logout
     }
 }

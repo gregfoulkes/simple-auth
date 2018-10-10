@@ -4,6 +4,10 @@ var exphbs = require('express-handlebars');
 let session = require('express-session');
 //setup middleware
 var bodyParser = require('body-parser');
+
+let loginRoutes = require('./routes/login_routes')
+let LoginRoutes = loginRoutes()
+
 app.use(express.static('public'));
 
 app.use(bodyParser.urlencoded({
@@ -33,29 +37,11 @@ app.use(function (req, res, next) {
 
 //init the session in one route
 
-app.get("/login", function(req, res){
-    let userName = req.query.username
-    // req.session will be defined now
-    console.log(userName)
-    if (userName && !req.session.username){
-        //set a session value from a form variable
-        req.session.username = userName;
-    }
-    res.redirect('/');
-});
+app.get("/login", LoginRoutes.login)
 
-app.get('/', function(req, res){
-    let greeting = "Hello";
-    if (req.session.username) {
-        greeting += (", " + req.session.username);
-    }
-    res.send(greeting);
-});
+app.get('/', LoginRoutes.home)
 
-app.get('/logout', function(req, res){
-    delete req.session.username;
-    res.redirect('/');
-});
+app.get('/logout', LoginRoutes.logout);
 
 
 //start the server
